@@ -7,16 +7,16 @@ const app = exp();
 const PORT = process.env.PORT || 5000;
 
 // Environment-based CORS configuration
-const getAllowedOrigins = () => {
-  if (process.env.NODE_ENV === 'production') {
-    return ['https://pmr-mu-fawn.vercel.app'];
-  }
-  return ['http://localhost:5173', 'http://localhost:3000'];
-};
+// const getAllowedOrigins = () => {
+//   if (process.env.NODE_ENV === 'production') {
+//     return ['https://pmr-mu-fawn.vercel.app'];
+//   }
+//   return ['http://localhost:5173', 'http://localhost:3000'];
+// };
 
 // Middleware
 app.use(cors({
-  origin: getAllowedOrigins(),
+  origin:'https://pmr-mu-fawn.vercel.app' ,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
