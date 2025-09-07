@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE } from '../config/api'; 
 
 const ReportPothole = () => {
   const { user } = useAuth();
@@ -21,7 +22,7 @@ const ReportPothole = () => {
       base64Image = await toBase64(formData.image);
     }
 
-    const res = await fetch("http://localhost:5000/api/report/upload", {
+    const res = await fetch(`${API_BASE}/report/upload`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

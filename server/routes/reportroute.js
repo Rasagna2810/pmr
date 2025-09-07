@@ -40,10 +40,10 @@ router.post('/upload', async (req, res) => {
 
     await newPothole.save();
 
-    res.json({ message: "Pothole reported successfully", newPothole });
+    res.json({ message: "Pothole reported successfully" });
   } catch (err) {
     console.error("OCR error:", err);
-    res.status(500).json({ error: "Failed to process image" });
+    res.status(500).json({ error: "Failed to process image . Try to upload gps image" });
   }
 });
 router.get("/potholes", async (req, res) => {

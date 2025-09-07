@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 // Environment-based CORS configuration
 const getAllowedOrigins = () => {
   if (process.env.NODE_ENV === 'production') {
-    return ['https://potholemapper-nu.vercel.app'];
+    return ['https://pmr-mu-fawn.vercel.app'];
   }
   return ['http://localhost:5173', 'http://localhost:3000'];
 };

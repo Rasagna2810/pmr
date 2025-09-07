@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { API_BASE } from '../../config/api'; 
 
 function MunicipalDashboard() {
   const { theme } = useTheme();
@@ -17,7 +18,7 @@ function MunicipalDashboard() {
 useEffect(() => {
   const fetchData = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/report/reported");
+      const res = await fetch(`${API_BASE}/report/reported`);
       const data = await res.json();
      if (data.success && Array.isArray(data.potholes)) {
         setPotholes(data.potholes);
@@ -36,7 +37,7 @@ useEffect(() => {
 useEffect(() => {
   const fetchData = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/report/pothole/completed/${user._id}`);
+      const res = await fetch(`${API_BASE}/report/pothole/completed/${user._id}`);
       const data = await res.json();
       if (data.success) {
         setCompletedPotholes({
@@ -55,7 +56,7 @@ useEffect(() => {
 
   // Assign pothole to logged-in user
   function assignPothole(potholeId) {
-    fetch(`http://localhost:5000/api/report/pothole/assign/${potholeId}`, {
+    fetch(`${API_BASE}/report/pothole/assign/${potholeId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -80,7 +81,7 @@ useEffect(() => {
 
   // Mark pothole as completed
   function completePothole(potholeId) {
-    fetch(`http://localhost:5000/api/report/pothole/complete/${potholeId}`, {
+    fetch(`${API_BASE}/report/pothole/complete/${potholeId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' }
     })

@@ -5,7 +5,7 @@ const getApiBaseUrl = () => {
   }
   
   // Production mode - use environment variable or fallback
-  return import.meta.env.VITE_API_BASE_URL || 'https://potholemapper-4gpw.onrender.com/api';
+  return 'https://pmr-8cn5.onrender.com/api';
 };
 
 export const API_BASE = getApiBaseUrl();
