@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { API_BASE } from '../config/api'; 
 import L from "leaflet";
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -15,7 +16,7 @@ const PotholeMap = () => {
   const [potholes, setPotholes] = useState([]);
 
    const loadPotholes = async () => {
-    const res = await fetch("http://localhost:5000/api/report/potholes");
+    const res = await fetch(`${API_BASE}/report/potholes`);
     const data = await res.json();
     setPotholes(data);
   };
