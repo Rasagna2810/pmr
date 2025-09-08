@@ -14,9 +14,9 @@ router.post('/upload', async (req, res) => {
     }
 
     // Run OCR directly on base64 string
-   console.time("OCR");
+   
 const { data: { text } } = await Tesseract.recognize(image, "eng");
-console.timeEnd("OCR");
+
 
     // Regex to find lat/lon
     const latMatch = text.match(/(-?\d{1,2}\.\d{3,})/g);
