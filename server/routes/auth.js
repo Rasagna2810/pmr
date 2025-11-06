@@ -331,7 +331,7 @@ async function sendEmail({ recipient_email, OTP }) {
     await axios.post(
       "https://api.brevo.com/v3/smtp/email",
       {
-        sender: { email: "potholegroup3@gmail.com" },   // your verified sender
+        sender: { email: "potholegroup3@gmail.com" },
         to: [{ email: recipient_email }],
         subject: "Potholemapper Password Recovery OTP",
         htmlContent: `<p>Your OTP is <b>${OTP}</b> (valid for 1 min)</p>`,
@@ -340,20 +340,26 @@ async function sendEmail({ recipient_email, OTP }) {
         headers: {
           "accept": "application/json",
           "content-type": "application/json",
-          "api-key": process.env.BREVO_API_KEY,   // ✅ THIS MUST BE HERE
+          "api-key": process.env.BREVO_API_KEY,
         },
       }
     );
 
     console.log("✅ Email sent successfully");
+    return { message: "Email sent" }; // ✅ return something
   } catch (err) {
     console.log("❌ EMAIL SEND ERROR:", err.response?.data || err);
+    throw new Error("Email sending failed"); // ✅ throw error to trigger backend catch
   }
 }
-router.post("/send_recovery_email", (req, res) => {
-  sendEmail(req.body)
-    .then((response) => res.json({ message: response.message })) // ✅ send JSON instead of text
-    .catch((error) => res.status(500).json({ message: error.message })); // ✅ same here
+
+router.post("/send_recovery_email", async (req, res) => {
+  try {
+    const result = await sendEmail(req.body); // ✅ wait for it
+    res.status(200).json(result); // ✅ send success response
+  } catch (error) {
+    res.status(500).json({ message: error.message }); // ✅ send failure response
+  }
 });
 
 
