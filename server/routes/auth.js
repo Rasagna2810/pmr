@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const nodemailer = require("nodemailer");
 const brevo =require("@getbrevo/brevo");
+const axios =require("axios")
 require('dotenv').config();
 
 const express = require('express');
@@ -325,32 +326,29 @@ router.get('/me', authenticate, (req, res) => {
     }
   });
 });
-function sendEmail({ recipient_email, OTP }) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const apiInstance = new brevo.TransactionalEmailsApi();
-      apiInstance.setApiKey(
-        brevo.TransactionalEmailsApiApiKeys.apiKey,
-        process.env.BREVO_API_KEY   // ⬅️ Use API KEY, NOT SMTP KEY
-      );
-
-      const emailData = {
-        sender: { email: "potholegroup3@gmail.com" }, // your verified sender
+async function sendEmail({ recipient_email, OTP }) {
+  try {
+    await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: { email: "potholegroup3@gmail.com" },   // your verified sender
         to: [{ email: recipient_email }],
         subject: "Potholemapper Password Recovery OTP",
-        htmlContent: `
-          <p>Your OTP for password recovery is: <b>${OTP}</b></p>
-          <p>This OTP is valid for 1 minute.</p>
-        `,
-      };
+        htmlContent: `<p>Your OTP is <b>${OTP}</b> (valid for 1 min)</p>`,
+      },
+      {
+        headers: {
+          "accept": "application/json",
+          "content-type": "application/json",
+          "api-key": process.env.BREVO_API_KEY,   // ✅ THIS MUST BE HERE
+        },
+      }
+    );
 
-      await apiInstance.sendTransacEmail(emailData);
-      resolve({ message: "✅ Email sent successfully" });
-    } catch (error) {
-      console.error("❌ EMAIL SEND ERROR:", error.response?.body || error);
-      reject({ message: "Failed to send email", error });
-    }
-  });
+    console.log("✅ Email sent successfully");
+  } catch (err) {
+    console.log("❌ EMAIL SEND ERROR:", err.response?.data || err);
+  }
 }
 router.post("/send_recovery_email", (req, res) => {
   sendEmail(req.body)
