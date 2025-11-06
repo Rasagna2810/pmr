@@ -327,48 +327,21 @@ router.get('/me', authenticate, (req, res) => {
 function sendEmail({ recipient_email, OTP }) {
   return new Promise((resolve, reject) => {
     var transporter = nodemailer.createTransport({
-      service: "gmail",
+       host: "smtp-relay.brevo.com",
+       port: 587,
+       secure: false,
       auth: {
-        user: process.env.MY_EMAIL,
-        pass: process.env.MY_PASSWORD,
+        user: process.env.BREVO_USER,
+        pass: process.env.BREVO_PASS,
       },
+      family: 4,
     });
 
     const mail_configs = {
-      from: process.env.MY_EMAIL,
+      from: "potholegroup3@gmail.com",
       to: recipient_email,
       subject: "Potholemapper Password Recovery OTP",
-      html: `<!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="UTF-8">
-  <title>CodePen - OTP Email Template</title>
-  
-
-</head>
-<body>
-<!-- partial:index.partial.html -->
-<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
-  <div style="margin:50px auto;width:70%;padding:20px 0">
-    <div style="border-bottom:1px solid #eee">
-      <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Koding 101</a>
-    </div>
-    <p style="font-size:1.1em">Hi,</p>
-    <p>Thank you for choosing Koding 101. Use the following OTP to complete your Password Recovery Procedure. OTP is valid for 5 minutes</p>
-    <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${OTP}</h2>
-    <p style="font-size:0.9em;">Regards,<br />Koding 101</p>
-    <hr style="border:none;border-top:1px solid #eee" />
-    <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-      <p>Koding 101 Inc</p>
-      <p>1600 Amphitheatre Parkway</p>
-      <p>California</p>
-    </div>
-  </div>
-</div>
-<!-- partial -->
-  
-</body>
-</html>`,
+      html: `<p>Your OTP for password recovery is: <b>${OTP}</b></p><p>This OTP is valid for 1 min.</p>`,
     };
     transporter.sendMail(mail_configs, function (error, info) {
       if (error) {

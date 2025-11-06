@@ -14,15 +14,28 @@ export default function () {
   const otp = location.state?.otp;
   function resendOTP() {
     if (disable) return;
-    axios
-      .post(`${API_BASE}/auth/send_recovery_email`, {
-        OTP: otp,
-        recipient_email: email,
-      })
-      .then(() => setDisable(true))
-      .then(() => alert("A new OTP has succesfully been sent to your email."))
-      .then(() => setTimer(60))
-      .catch(console.log);
+
+fetch(`${API_BASE}/auth/send_recovery_email`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    OTP: otp,
+    recipient_email: email,
+  }),
+})
+  .then((res) => {
+    if (!res.ok) throw new Error("Failed to send OTP");
+    return res.json();
+  })
+  .then(() => {
+    setDisable(true);
+    alert("A new OTP has succesfully been sent to your email.");
+    setTimer(60);
+  })
+  .catch((err) => console.log("Error sending recovery email:", err));
+
   }
 
   function verifyOTP() {
