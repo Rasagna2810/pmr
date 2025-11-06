@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import {API_BASE} from '../../config/api';
 
 const Signup = ({ onSwitchToLogin }) => {
   const { signup, loading, error, clearError } = useAuth();
@@ -57,7 +58,7 @@ const Signup = ({ onSwitchToLogin }) => {
     clearError();
     
     try {
-      const response = await fetch('/api/auth/signup', {
+      const response = await fetch(`${API_BASE}/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submitData)
