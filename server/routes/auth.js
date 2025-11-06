@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const nodemailer = require("nodemailer");
+const brevo =require("@getbrevo/brevo");
 require('dotenv').config();
 
 const express = require('express');
@@ -325,31 +326,30 @@ router.get('/me', authenticate, (req, res) => {
   });
 });
 function sendEmail({ recipient_email, OTP }) {
-  return new Promise((resolve, reject) => {
-    var transporter = nodemailer.createTransport({
-       host: "smtp-relay.brevo.com",
-       port: 587,
-       secure: false,
-      auth: {
-        user: process.env.BREVO_USER,
-        pass: process.env.BREVO_PASS,
-      },
-      family: 4,
-    });
+  return new Promise(async (resolve, reject) => {
+    try {
+      const apiInstance = new brevo.TransactionalEmailsApi();
+      apiInstance.setApiKey(
+        brevo.TransactionalEmailsApiApiKeys.apiKey,
+        process.env.BREVO_API_KEY   // ⬅️ Use API KEY, NOT SMTP KEY
+      );
 
-    const mail_configs = {
-      from: "potholegroup3@gmail.com",
-      to: recipient_email,
-      subject: "Potholemapper Password Recovery OTP",
-      html: `<p>Your OTP for password recovery is: <b>${OTP}</b></p><p>This OTP is valid for 1 min.</p>`,
-    };
-    transporter.sendMail(mail_configs, function (error, info) {
-      if (error) {
-        console.log(error);
-        return reject({ message: `An error has occured` });
-      }
-      return resolve({ message: "Email sent succesfuly" });
-    });
+      const emailData = {
+        sender: { email: "potholegroup3@gmail.com" }, // your verified sender
+        to: [{ email: recipient_email }],
+        subject: "Potholemapper Password Recovery OTP",
+        htmlContent: `
+          <p>Your OTP for password recovery is: <b>${OTP}</b></p>
+          <p>This OTP is valid for 1 minute.</p>
+        `,
+      };
+
+      await apiInstance.sendTransacEmail(emailData);
+      resolve({ message: "✅ Email sent successfully" });
+    } catch (error) {
+      console.error("❌ EMAIL SEND ERROR:", error.response?.body || error);
+      reject({ message: "Failed to send email", error });
+    }
   });
 }
 router.post("/send_recovery_email", (req, res) => {
